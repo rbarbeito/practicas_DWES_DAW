@@ -1,3 +1,5 @@
+from multiprocessing import Value
+from re import I
 from urllib import response
 from flask import Flask, flash, jsonify, redirect, request, render_template
 from flask_pymongo import PyMongo
@@ -5,16 +7,16 @@ from flask_pymongo import PyMongo
 # from flask_wtf.csrf import CSRFProtect, CSRFError
 import os
 from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash
 
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET').encode()
-app.config["MONGO_URI"] = os.getenv('MONGO_DB')
+app.config["MONGO_URI"] = os.getenv('MONGO_URI')
 mongo = PyMongo(app)
 # csrf = CSRFProtect(app)
-
 
 
 @app.route('/')
@@ -29,7 +31,7 @@ def login():
 
 @app.route('/register')
 def register():
-    return "register"
+    return render_template('register.html'), 200
 
 
 @app.route('/profile')
@@ -45,15 +47,45 @@ def login_api():
     email = request.form['email']
     password = request.form['password']
 
-    return jsonify({"email": email, "password": password}), 200
+    try:
+        cursor = mongo.db.users.find_one({"email": email})
+        if not cursor:
+            raise ("No existe")
+
+        if cursor['password'] != generate_password_hash(password):
+            raise ('Error de contraseña')
+
+    except Exception as e:
+        flash(e)
+        return render_template('login.html'), 401
+
+    return render_template('login.html'), 200  # in the future to profile
 
 
 @app.route('/register', methods=['POST'])
 def register_api():
     email = request.form['email']
     password = request.form['password']
+    hashed_password = generate_password_hash(password)
 
-    return jsonify({"email": email, "password": password}), 200
+    try:
+        id = mongo.db.users.insert_one(
+            {'email': email, 'password': hashed_password})
+        if not id:
+            raise Exception('Error al insertar usuario')
+
+        id = str(id).split("'")[1]
+        response = {
+            "id": id,
+            "password": hashed_password,
+            "email": email
+        }
+
+        return render_template('perfil.html'), 201
+
+    except Exception as e:
+        flash(e)
+        return render_template('register.html')
 
 
 @app.route('/perfil/<int:id>', methods=['GET', 'PUT', 'PATCH'])

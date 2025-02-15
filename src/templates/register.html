@@ -1,0 +1,33 @@
+{% extends './base.html' %}
+{% block title %}Register{% endblock %}
+
+{% block body %}
+
+
+
+<div class="">
+	<div class="">
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+		{% for message in messages %}
+		<p>{{message}}</p>
+		{% endfor %}
+		{% endif %}
+		{% endwith %}
+	</div>
+	<form action="/register" method="post">
+		<div class="">
+			<label for="email" class="">Email</label>
+			<input type="email" name="email" id="email" class="">
+		</div>
+		<div class="">
+			<label for="password" class="">Password</label>
+			<input type="password" name="password" id="password" class="">
+		</div>
+		<input type="hidden" name="csrf_token" value="">
+		<button type="submit" class="">Register</button>
+
+	</form>
+</div>
+
+{% endblock %}
