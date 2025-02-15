@@ -1,18 +1,25 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
+from flask_wtf.csrf import CSRFProtect
+import os
+from dotenv import load_dotenv
 
+
+load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv('SECRET').encode()
+csrf = CSRFProtect(app)
+
 
 
 @app.route('/')
 def index():
-
-    return "index"
+    return render_template('index.html'), 200
 
 
 @app.route('/login')
 def login():
-    return "login"
+    return render_template('login.html'), 200
 
 
 @app.route('/register')
