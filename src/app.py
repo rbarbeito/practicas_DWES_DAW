@@ -1,6 +1,7 @@
 from urllib import response
 from flask import Flask, flash, jsonify, redirect, request, render_template
-from flask_wtf import FlaskForm
+from flask_pymongo import PyMongo
+# from flask_wtf import FlaskForm
 # from flask_wtf.csrf import CSRFProtect, CSRFError
 import os
 from dotenv import load_dotenv
@@ -10,6 +11,8 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET').encode()
+app.config["MONGO_URI"] = os.getenv('MONGO_DB')
+mongo = PyMongo(app)
 # csrf = CSRFProtect(app)
 
 
