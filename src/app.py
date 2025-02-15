@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 
 
 app = Flask(__name__)
@@ -21,6 +21,8 @@ def register():
     return "register"
 
 
+# api
+
 @app.route('/login', methods=['POST'])
 def login_api():
     return "login api"
@@ -31,15 +33,21 @@ def register_api():
     return "register api"
 
 
-@app.route('/perfil/:<int:id>', methods=['GET'])
+@app.route('/perfil/<int:id>', methods=['GET', 'PUT', 'PATCH'])
 def profile_api(id):
-    return "Profile api"
+
+    if request.method == 'PUT':
+        return "Update all param of perfil de {}".format(id)
+
+    if request.method == 'PATCH':
+        return " Update on param of profile de {}".format(id)
+
+    return "Profile api de {}".format(id)
 
 
 @app.errorhandler(404)
 def not_found(error):
     return "Error: {}".format(error.code)
-
 
 
 if __name__ == "__main__":
