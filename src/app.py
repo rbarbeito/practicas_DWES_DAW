@@ -1,5 +1,7 @@
-from flask import Flask, request, render_template
-from flask_wtf.csrf import CSRFProtect
+from urllib import response
+from flask import Flask, flash, jsonify, redirect, request, render_template
+from flask_wtf import FlaskForm
+# from flask_wtf.csrf import CSRFProtect, CSRFError
 import os
 from dotenv import load_dotenv
 
@@ -8,7 +10,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET').encode()
-csrf = CSRFProtect(app)
+# csrf = CSRFProtect(app)
 
 
 
@@ -32,18 +34,23 @@ def perfil_user():
     return "template user"
 
 
-
-
 # api
 
 @app.route('/login', methods=['POST'])
 def login_api():
-    return "login api"
+
+    email = request.form['email']
+    password = request.form['password']
+
+    return jsonify({"email": email, "password": password}), 200
 
 
 @app.route('/register', methods=['POST'])
 def register_api():
-    return "register api"
+    email = request.form['email']
+    password = request.form['password']
+
+    return jsonify({"email": email, "password": password}), 200
 
 
 @app.route('/perfil/<int:id>', methods=['GET', 'PUT', 'PATCH'])
@@ -62,6 +69,14 @@ def profile_api(id):
 def not_found(error):
     return "Error: {}".format(error.code)
 
+
+# @app.errorhandler(CSRFError)
+# def csrf_error(error):
+#     flash('Error de formulario')
+#     path = request.path.split('/')[1]
+#     print(path)
+
+#     return redirect(url_for(path))
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=5000)

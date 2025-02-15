@@ -3,7 +3,18 @@
 
 {% block body %}
 
+
+
 <div class="">
+	<div class="">
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+		{% for message in messages %}
+		<p>{{message}}</p>
+		{% endfor %}
+		{% endif %}
+		{% endwith %}
+	</div>
 	<form action="/login" method="post">
 		<div class="">
 			<label for="email" class="">Email</label>
@@ -13,8 +24,9 @@
 			<label for="password" class="">Password</label>
 			<input type="password" name="password" id="password" class="">
 		</div>
-		<input type="hidden" name="csrf" value="{{ csrf_token() }}">
+		<input type="hidden" name="csrf_token" value="">
 		<button type="submit" class="">Login</button>
+		
 	</form>
 </div>
 
