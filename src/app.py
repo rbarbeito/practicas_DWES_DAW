@@ -12,13 +12,19 @@ def index():
 
 @app.route('/login')
 def login():
-
     return "login"
 
 
 @app.route('/register')
 def register():
     return "register"
+
+
+@app.route('/profile')
+def perfil_user():
+    return "template user"
+
+
 
 
 # api
